@@ -48,8 +48,9 @@ app.post('/google', (req, res, next) => {
                         errors: err
                     });
                 }
-
-                res.status(200).json({
+                var token = jwt.sign({ usuario: usuario }, SEED, { expiresIn: 14400 });
+                usuario.password = ':)';
+                return res.status(200).json({
                     ok: true,
                     mensaje: 'Login post funciona',
                     usuario: usuario,
