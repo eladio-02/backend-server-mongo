@@ -39,9 +39,45 @@ app.get('/', (req, res) => {
 
         });
 });
-
 /////////////////////////////////////////////// 
-/// CREAR UN HOSPITAL ////////////////
+/// OBTENER UN SOLO MEDICO ////////////////
+/////////////////////////////////////////////// 
+app.get('/:id', (req, res) => {
+
+    var id = req.params.id;
+    var body = req.body;
+
+
+    Medico.findById(id)
+        .populate('usuario', 'nombre email img')
+        .populate('hospital')
+        .exec((err, medico) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error al buscar medico',
+                    errors: err
+                });
+
+            }
+            if (!medico) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'El medico con el id ' + id + ' no fue encontrado',
+                    errors: { message: 'No existe un medico con ese id' }
+                });
+            }
+
+            res.status(201).json({
+                ok: true,
+                medico: medico
+            });
+
+        });
+
+});
+/////////////////////////////////////////////// 
+/// CREAR UN MEDICO ////////////////
 /////////////////////////////////////////////// 
 app.post('/', mdAutenticacion.verificaToken, (req, res) => {
     var body = req.body;
@@ -61,6 +97,7 @@ app.post('/', mdAutenticacion.verificaToken, (req, res) => {
             });
 
         }
+
 
         res.status(201).json({
             ok: true,
